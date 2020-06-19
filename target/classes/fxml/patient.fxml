@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.control.Button?>
+<BorderPane fx:id="mainPane"
+            styleClass="main_pane"
+            stylesheets="/style/main.css"
+            xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/10.0.2-internal">
+
+    <top>
+        <Button onAction="#returnTo">Wróć</Button>
+    </top>
+
+</BorderPane>
