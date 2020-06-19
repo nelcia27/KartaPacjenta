@@ -2,10 +2,15 @@ package fhir;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.util.BundleUtil;
+import org.hl7.fhir.instance.model.api.IBaseBundle;
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class MainResourceGetter {
 
@@ -25,32 +30,40 @@ public class MainResourceGetter {
                 .encodedJson()
                 .execute();
 
-        System.out.println("Found " +patients.getEntry().size()+ " patients named 'brekke'");
+        Bundle observations = client
+                .search()
+                .forResource(Observation.class)
+                .returnBundle(Bundle.class)
+                .encodedJson()
+                .execute();
 
-        ArrayList<Resource> resources=new ArrayList<>();
+        System.out.println("Found " +patients.getEntry().size()+ " patients ");
+        System.out.println("Found " +observations.getEntry().size()+ " observations ");
+
+        ArrayList<Resource> resourcesPatient=new ArrayList<>();
         for (Iterator<Bundle.BundleEntryComponent> it = patients.getEntry().iterator(); it.hasNext(); ) {
             Bundle.BundleEntryComponent p = it.next();
-            resources.add(p.getResource());
+            resourcesPatient.add(p.getResource());
         }
 
-        ArrayList<String> idList=new ArrayList<>();
-        for(Resource r : resources){
-            idList.add(r.getId());
+        ArrayList<String> idListPatient=new ArrayList<>();
+        for(Resource r : resourcesPatient){
+            idListPatient.add(r.getId());
         }
 
-      /*Parameters inParams = new Parameters();
-      inParams.addParameter().setName("start").setValue(new DateType("2001-01-01"));
-      inParams.addParameter().setName("end").setValue(new DateType("2015-03-01"));*/
+        ArrayList<Resource> resourcesObservations=new ArrayList<>();
+        for (Iterator<Bundle.BundleEntryComponent> it = observations.getEntry().iterator(); it.hasNext(); ) {
+            Bundle.BundleEntryComponent p = it.next();
+            resourcesObservations.add(p.getResource());
+        }
+
+        ArrayList<String> idListObservations=new ArrayList<>();
+        for(Resource r : resourcesObservations){
+            idListObservations.add(r.getId());
+        }
+
         ArrayList<Patient> patients1=new ArrayList<>();
-        for(String id : idList){
-         /*Patient p = client
-            .operation()
-            .onInstance(new IdType("Patient", id))
-            .named("$everything")
-            .withParameters(inParams)
-            .useHttpGet()
-            .returnResourceType(Patient.class)
-            .execute();*/
+        for(String id : idListPatient){
             Patient p=client
                     .read()
                     .resource(Patient.class)
@@ -60,11 +73,27 @@ public class MainResourceGetter {
             patients1.add(p);
         }
 
-        for(Patient p : patients1){
-            System.out.println(p.NAME);
+        ArrayList<Observation> observations1=new ArrayList<>();
+        for(String id : idListObservations){
+            Observation p=client
+                    .read()
+                    .resource(Observation.class)
+                    .withId(id)
+                    .encodedJson()
+                    .execute();
+            observations1.add(p);
+        }
 
+        for(Patient p : patients1){
+            System.out.println(p.NAME.getParamName());
             System.out.println(p.getGender());
             System.out.println(p.getBirthDate());
+        }
+
+        for(Observation p : observations1){
+            System.out.println(p.getSubject().getReference());
+            System.out.println(p.getCode().getText());
+            //System.out.println(p.getBodySite());
         }
 
     }
