@@ -1,5 +1,6 @@
 package sample;
 
+import ca.uhn.fhir.rest.client.exceptions.FhirClientConnectionException;
 import fhir.MainResourceGetter;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -17,9 +18,14 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         MainResourceGetter h = new MainResourceGetter();
-        h.run();
+        try {
+            h.run();
+        } catch (FhirClientConnectionException ignored){
+            System.out.println("Serwer fhir jest nie odpalony, albo brak połączenia!");
+            System.exit(0);
+        }
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/sample.fxml"));
-        loader.setController(new Controller());
+        loader.setController(new Controller(h));
         Parent root = loader.load();
         primaryStage.setTitle("Karta Pacjenta");
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();

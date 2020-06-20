@@ -3,6 +3,7 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <BorderPane fx:id="mainPane"
             styleClass="main_pane"
             stylesheets="/style/main.css"
@@ -12,5 +13,26 @@
     <top>
         <Button onAction="#returnTo">Wróć</Button>
     </top>
+    <center>
+        <VBox style="-fx-spacing: 20px;">
+            <VBox>
+                <Label fx:id="patientName" style="-fx-font-size: 4em;"/>
+                <HBox>
+                    <Label fx:id="patientGender" styleClass="patientData"/>
+                    <Label fx:id="patientBirthDate" styleClass="patientData"/>
+                </HBox>
+                <Label fx:id="patientAddress" styleClass="patientData"/>
+                <HBox>
+                    <Label styleClass="patientData">Nr tel: </Label>
+                    <Label fx:id="patientPhoneNumber" styleClass="patientData"/>
+                </HBox>
+
+            </VBox>
+            <VBox>
+                <Label></Label>
+            </VBox>
+        </VBox>
+
+    </center>
 
 </BorderPane>

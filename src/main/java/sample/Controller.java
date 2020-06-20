@@ -1,5 +1,7 @@
 package sample;
 
+import fhir.MainResourceGetter;
+import fhir.PatientData;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,8 +21,13 @@ public class Controller {
     @FXML public Button searchButton;
     @FXML public VBox patientsVBox;
 
-    private final ArrayList<String> patientList = new ArrayList<>();  // TODO: Patient zamiast string
-    private ArrayList<String> shownList = new ArrayList<>();
+    private final MainResourceGetter fhirResourceGetter;
+    private final ArrayList<PatientData> patientList = new ArrayList<>();
+    private final ArrayList<PatientData> shownList = new ArrayList<>();
+
+    public Controller(MainResourceGetter fhirResourceGetter) {
+        this.fhirResourceGetter = fhirResourceGetter;
+    }
 
     @FXML public void initialize(){
         searchField.prefHeightProperty().bind(mainPane.heightProperty().multiply(0.05));
@@ -32,22 +39,21 @@ public class Controller {
 
     private void initPatientsList(){
         patientList.clear();
-        patientList.add("Krzysztof Sychla");
-        patientList.add("Kornelia Staszewska");
-        shownList = (ArrayList<String>) patientList.clone();
+        patientList.addAll(fhirResourceGetter.getPatients());
+        shownList.addAll(patientList);
     }
 
     private void showPatients(){
         patientsVBox.getChildren().clear();
-        for(String patients : shownList){
+        for(PatientData patients : shownList){
             addPatientButton(patients);
         }
     }
 
-    private void addPatientButton(String name){    // TODO: Patient info
-        Button patientButton = new Button(name);
+    private void addPatientButton(PatientData patient){
+        Button patientButton = new Button(patient.getName());
         patientButton.getStyleClass().add("patient_button");
-        patientButton.setOnMouseClicked(event -> changeTo(new Patient(this)));
+        patientButton.setOnMouseClicked(event -> changeTo(new Patient(this, patient)));
         patientsVBox.getChildren().add(patientButton);
     }
 
@@ -58,13 +64,13 @@ public class Controller {
     @FXML
     public void search(){
         if("".equals(searchField.getText())){
-            shownList = (ArrayList<String>) patientList.clone();
+            shownList.addAll(patientList);
             showPatients();
             return;
         }
         shownList.clear();
-        for (String patient : patientList) {
-            if(patient.toLowerCase().contains(searchField.getText().toLowerCase())){
+        for (PatientData patient : patientList) {
+            if(patient.getName().toLowerCase().contains(searchField.getText().toLowerCase())){
                 shownList.add(patient);
             }
         }

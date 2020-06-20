@@ -3,17 +3,20 @@ package fhir;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.util.BundleUtil;
-import org.checkerframework.checker.units.qual.A;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class MainResourceGetter {
+
+    public ArrayList<PatientData> getPatients() {
+        return patients;
+    }
+
+    private ArrayList<PatientData> patients;
 
     public void run() {
 
@@ -24,7 +27,7 @@ public class MainResourceGetter {
         IGenericClient client = ctx.newRestfulGenericClient("http://localhost:8080/baseR4");
 
         // Take all needed resources
-        ArrayList<PatientData> patients=getPatients(ctx,client);
+        patients = getPatientsFromServer(ctx,client);
         //ArrayList<String> observations=getObservations(ctx,client);
         //ArrayList<String> medicationRequests=getMedicationRequests(ctx,client);
 
@@ -41,7 +44,7 @@ public class MainResourceGetter {
         }*/
     }
 
-    public ArrayList<PatientData> getPatients(FhirContext ctx, IGenericClient client){
+    public ArrayList<PatientData> getPatientsFromServer(FhirContext ctx, IGenericClient client){
         List<IBaseResource> patientsX = new ArrayList<>();
 
         Bundle patients = client
@@ -91,7 +94,7 @@ public class MainResourceGetter {
             //patient.alive=p.getDeceased().toString();
             patient.address=p.getAddress().get(0).getCity()+" "+p.getAddress().get(0).getCountry()+" "+p.getAddress().get(0).getDistrict()+" "+p.getAddress().get(0).getPostalCode();
             patient.meritalStatus=p.getMaritalStatus().getText();
-            patient.birthMultiple=p.getMultipleBirthBooleanType().booleanValue();
+//            patient.birthMultiple=p.getMultipleBirthBooleanType().booleanValue();
             //patient.contactRelationShip=p.getContact().get(0).getRelationship().toString(); //BRAK DANYCH NA SERWERZE
             patient.language=p.getLanguage(); //BRAK DANYCH NA SERWERZE
             patient.medician=p.getGeneralPractitioner().toString(); //BRAK DANYCH NA SERWERZE

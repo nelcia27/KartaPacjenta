@@ -24,3 +24,7 @@
     -fx-max-width: 200px;
     -fx-font-size: 24px;
 }
+
+.patientData {
+    -fx-font-size: 3em;
+}
