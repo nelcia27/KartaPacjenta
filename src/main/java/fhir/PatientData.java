@@ -2,6 +2,7 @@ package fhir;
 
 import org.hl7.fhir.r4.model.HumanName;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class PatientData {
     String preferredLanguage;
     String medician;
     String organizationMain;
+    ArrayList<ObservationData> observationData;
 
     PatientData(String id){
         this.id=id;
