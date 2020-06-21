@@ -2,6 +2,7 @@ package fhir;
 
 import org.hl7.fhir.r4.model.HumanName;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -90,7 +91,7 @@ public class PatientData {
         return organizationMain;
     }
 
-    String id;  // FIXME: czy na pewno pola mają byc package-private?
+    String id;  // FIXME: może lepiej jak będą prywatne i init w konstruktorze?
     Boolean status;
     String name;
     String phone;
@@ -111,6 +112,7 @@ public class PatientData {
     String preferredLanguage;
     String medician;
     String organizationMain;
+    ArrayList<ObservationData> observationData;
 
     PatientData(String id){
         this.id=id;

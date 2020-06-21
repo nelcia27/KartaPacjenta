@@ -29,17 +29,25 @@ public class MainResourceGetter {
         // Take all needed resources
         patients = getPatientsFromServer(ctx,client);
         //ArrayList<String> observations=getObservations(ctx,client);
+        ArrayList<ObservationData> observations=getObservations(ctx,client);
         //ArrayList<String> medicationRequests=getMedicationRequests(ctx,client);
 
         for(PatientData p : patients){
-            System.out.println(p);
+            ArrayList<ObservationData> observationData=new ArrayList<>();
+            for(ObservationData o : observations){
+                if(o.sourceId.equals("Patient/"+p.id)){
+                    observationData.add(o);
+                }
+            }
+            p.observationData=observationData;
+            System.out.println("Found "+p.observationData.size()+" observations for patient with id "+p.id);
         }
 
-        /*for(String o : observations){
-            System.out.println(o);
+        for(ObservationData o : observations){
+            //System.out.println(o);
         }
 
-        for(String m : medicationRequests){
+        /*for(String m : medicationRequests){
             System.out.println(m);
         }*/
     }
@@ -85,7 +93,7 @@ public class MainResourceGetter {
         for(Patient p : patients1){
             //System.out.println(p.NAME.getParamName());
             //System.out.println(p.getGender());
-            PatientData patient=new PatientData(p.getIdBase());
+            PatientData patient=new PatientData(p.getIdElement().getIdPart());
             patient.status=p.getActive();
             patient.name=p.getName().get(0).getNameAsSingleString();
             patient.phone=p.getTelecom().get(0).getValue();
@@ -119,7 +127,7 @@ public class MainResourceGetter {
         return res_patients;
     }
 
-    public ArrayList<String> getObservations(FhirContext ctx, IGenericClient client){
+    public ArrayList<ObservationData> getObservations(FhirContext ctx, IGenericClient client){
         List<IBaseResource> observationsX = new ArrayList<>();
         Bundle observations = client
                 .search()
@@ -161,12 +169,30 @@ public class MainResourceGetter {
             observations1.add(p);
         }
 
-        ArrayList<String> res_observation= new ArrayList<>();
+        ArrayList<ObservationData> res_observation= new ArrayList<>();
+        //int i=0;
         for(Observation p : observations1){
-            //System.out.println(p.getSubject().getReference());
-            //--TYLKO NA CHWILE
-            // res_observation.add(p.getCode().getText());
+            //i++;
+            ObservationData o= new ObservationData(p.getId());
+            o.sourceId=p.getSubject().getReference();
+            o.status=p.getStatus().toCode();
+            o.category=p.getCategory().get(0).getCoding().get(0).getCode();
+            o.info=p.getCode().getText();
+            o.adataTime=p.getEffectiveDateTimeType().getValueAsString();
+            //o.value=p.getValue().primitiveValue();
+            o.encounter=p.getEncounter().getReference();
+            res_observation.add(o);
+            /*if(i<2){
+                System.out.println(o.sourceId);
+                System.out.println(o.status);
+                System.out.println(o.category);
+                System.out.println(o.info);
+                System.out.println(o.adataTime);
+                //System.out.println(o.value);
+                System.out.println(o.encounter);
+            }*/
             //System.out.println(p.getBodySite());
+
         }
         return res_observation;
     }
