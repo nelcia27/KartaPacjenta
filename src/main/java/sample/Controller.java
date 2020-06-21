@@ -39,6 +39,7 @@ public class Controller {
 
     private void initPatientsList(){
         patientList.clear();
+        shownList.clear();
         patientList.addAll(fhirResourceGetter.getPatients());
         shownList.addAll(patientList);
     }
@@ -63,12 +64,12 @@ public class Controller {
 
     @FXML
     public void search(){
+        shownList.clear();
         if("".equals(searchField.getText())){
             shownList.addAll(patientList);
             showPatients();
             return;
         }
-        shownList.clear();
         for (PatientData patient : patientList) {
             if(patient.getName().toLowerCase().contains(searchField.getText().toLowerCase())){
                 shownList.add(patient);
