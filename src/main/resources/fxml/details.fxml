@@ -9,7 +9,7 @@
             xmlns="http://javafx.com/javafx/10.0.2-internal">
 
     <top>
-        <Button onAction="#returnTo" styleClass="historyButton">Wróć</Button>
+        <Button onAction="#returnTo" styleClass="filtrCombo">Wróć</Button>
     </top>
     <center>
 

@@ -178,7 +178,7 @@ public class MainResourceGetter {
             o.status=p.getStatus().toCode();
             o.category=p.getCategory().get(0).getCoding().get(0).getCode();
             o.info=p.getCode().getText();
-            o.adataTime=p.getEffectiveDateTimeType().getValueAsString();
+            o.adataTime=p.getEffectiveDateTimeType().getValue();
             //o.value=p.getValue().primitiveValue();
             o.encounter=p.getEncounter().getReference();
             res_observation.add(o);

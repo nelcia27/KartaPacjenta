@@ -15,7 +15,7 @@
     <top>
         <BorderPane>
             <left>
-                <Button onAction="#returnTo" styleClass="historyButton">Wróć</Button>
+                <Button onAction="#returnTo" styleClass="filtrCombo">Wróć</Button>
             </left>
             <center>
                 <VBox alignment="TOP_CENTER">

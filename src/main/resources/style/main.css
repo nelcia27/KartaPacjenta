@@ -37,7 +37,10 @@
     -fx-background-color: #ddd;
     -fx-padding: 10px;
     -fx-font-size: 1.5em;
+}
 
+.historyButton{
+    -fx-max-width: 1000px;
 }
 
 .historyButton:hover, .filtrCombo:hover{

@@ -91,6 +91,10 @@ public class PatientData {
         return organizationMain;
     }
 
+    public ArrayList<ObservationData> getObservationData() {
+        return observationData;
+    }
+
     String id;  // FIXME: może lepiej jak będą prywatne i init w konstruktorze?
     Boolean status;
     String name;
