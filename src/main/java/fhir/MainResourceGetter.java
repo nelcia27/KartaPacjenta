@@ -146,8 +146,8 @@ public class MainResourceGetter {
 
         ArrayList<ObservationData> res_observation= new ArrayList<>();
         for(Observation p : observations1){
-            Double value=120.0;
-            String unit="cm";
+            Double value=0.0;
+            String unit="";
             try{
                 value=p.getValueQuantity().getValue().doubleValue();
                 System.out.println(value);
