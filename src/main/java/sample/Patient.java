@@ -3,14 +3,14 @@ package sample;
 import fhir.ObservationData;
 import fhir.PatientData;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Patient {
@@ -18,6 +18,7 @@ public class Patient {
     private final PatientData patientInfo;
     private final SimpleDateFormat mainFormat = new SimpleDateFormat("dd-MM-yyyy");
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+    private final SimpleDateFormat months = new SimpleDateFormat("MM-yyyy");
 
     @FXML public BorderPane mainPane;
     @FXML public Label patientName;
@@ -26,7 +27,7 @@ public class Patient {
     @FXML public Label patientAddress;
     @FXML public Label patientPhoneNumber;
     @FXML public VBox patientHistory;
-    @FXML public ComboBox<String> filtrComboBox;
+    @FXML public ComboBox<Date> filtrComboBox;
 
     public Patient(Object prevController, PatientData patientInfo) {
         this.prevController = prevController;
@@ -40,20 +41,24 @@ public class Patient {
         patientAddress.setText(patientInfo.getAddress());
         patientPhoneNumber.setText(patientInfo.getPhone());
 
+        showPatientHistory(null);
+        setComboOption();
+    }
+
+    private void showPatientHistory(Date monthYear) {
+        patientHistory.getChildren().clear();
         Date currentDate = patientInfo.getObservationData().get(0).getAdataTime();
-        createLabel(mainFormat.format(currentDate));
+        if(monthYear == null || months.format(currentDate).equals(months.format(monthYear)))
+            createLabel(mainFormat.format(currentDate));
         for(ObservationData observationData : patientInfo.getObservationData()){
             if(!mainFormat.format(currentDate).equals(mainFormat.format(observationData.getAdataTime()))){
-                createLabel(mainFormat.format(observationData.getAdataTime()));
                 currentDate = observationData.getAdataTime();
+                if(monthYear == null || months.format(currentDate).equals(months.format(monthYear)))
+                    createLabel(mainFormat.format(currentDate));
             }
-            createButton(observationData);
+            if(monthYear == null || months.format(currentDate).equals(months.format(monthYear)))
+                createButton(observationData);
         }
-
-        setComboOption("Styczeń 2019"); // TODO
-        setComboOption("Luty 2019");
-        setComboOption("Marzec 2019");
-        setComboOption("Styczeń 2020");
     }
 
     private void createButton(ObservationData observationData){    // TODO: maybe polimorfism?
@@ -62,13 +67,13 @@ public class Patient {
         Label time = new Label(timeFormat.format(observationData.getAdataTime()));
         VBox buttonName = new VBox();
         Label properName = new Label(observationData.getInfo());
-        Label generalName = new Label("Obserwacja");   //TODO: name (general)
+        Label generalName = new Label("Obserwacja");   // TODO: name (general)
         generalName.getStyleClass().add("generalName");
         buttonName.getChildren().addAll(properName, generalName);
         buttonLayout.getChildren().addAll(time, buttonName);
         current.setGraphic(buttonLayout);
         current.getStyleClass().add("historyButton");
-        current.setOnAction(event -> gotoDetails());    // TODO: set which details
+        current.setOnAction(event -> gotoDetails(observationData));    // TODO: set which details
         patientHistory.getChildren().add(current);
     }
 
@@ -78,17 +83,57 @@ public class Patient {
         patientHistory.getChildren().add(dateLabel);
     }
 
-    private void gotoDetails(){
-        Main.changeScene("/fxml/details.fxml", new Details(this), mainPane);
+    private void gotoDetails(ObservationData observationData){
+        Main.changeScene("/fxml/details.fxml", new Details(this, observationData), mainPane);
     }
 
-    private void setComboOption(String time){  // TODO: Real time
-        filtrComboBox.getItems().addAll(time);
+    private void setComboOption(){  // TODO: Real time
+        Callback<ListView<Date>, ListCell<Date>> cellFactory = new Callback<ListView<Date>, ListCell<Date>>() {
+
+            @Override
+            public ListCell<Date> call(ListView<Date> l) {
+                return new ListCell<Date>() {
+
+                    @Override
+                    protected void updateItem(Date item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null || empty) {
+                            setGraphic(null);
+                        } else {
+                            setText(months.format(item));
+                        }
+                    }
+                } ;
+            }
+        };
+
+// Just set the button cell here:
+        filtrComboBox.setButtonCell(cellFactory.call(null));
+        filtrComboBox.setCellFactory(cellFactory);
+        filtrComboBox.getItems().add(null);
+        Date currentDate = patientInfo.getObservationData().get(0).getAdataTime();
+        filtrComboBox.getItems().add(currentDate);
+        for(ObservationData observationData : patientInfo.getObservationData()){
+            if(!months.format(currentDate).equals(months.format(observationData.getAdataTime()))){
+                currentDate = observationData.getAdataTime();
+                filtrComboBox.getItems().add(currentDate);
+            }
+        }
+    }
+
+    @FXML
+    public void weightPlot(){
+        Main.changeScene("/fxml/plots.fxml", new Plots(this), mainPane);
+    }
+
+    @FXML
+    public void heightPlot(){
+        Main.changeScene("/fxml/plots.fxml", new Plots(this), mainPane);
     }
 
     @FXML
     public void selectedCombo(){    // TODO: change view when combo chosen
-        System.out.println(filtrComboBox.getValue());
+        showPatientHistory(filtrComboBox.getValue());
     }
 
     @FXML

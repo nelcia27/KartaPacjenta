@@ -39,9 +39,16 @@
 
     </top>
     <center>
-        <ScrollPane style="-fx-border-width: 0; -fx-background-color: none;" hbarPolicy="NEVER">
-            <VBox fx:id="patientHistory" spacing="10"/>
-        </ScrollPane>
+        <VBox spacing="20">
+            <HBox spacing="20" alignment="TOP_CENTER">
+                <Button styleClass="filtrCombo" onAction="#weightPlot">Waga</Button>
+                <Button styleClass="filtrCombo" onAction="#heightPlot">Wzrost</Button>
+            </HBox>
+            <ScrollPane style="-fx-border-width: 0; -fx-background-color: none;" hbarPolicy="NEVER">
+                <VBox fx:id="patientHistory" spacing="10"/>
+            </ScrollPane>
+        </VBox>
+
     </center>
 
 </BorderPane>
