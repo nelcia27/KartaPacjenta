@@ -150,9 +150,7 @@ public class MainResourceGetter {
             String unit="";
             try{
                 value=p.getValueQuantity().getValue().doubleValue();
-                System.out.println(value);
                 unit = p.getValueQuantity().getUnit();
-                System.out.println(unit);
             }catch (Exception e){
 
             }
@@ -229,7 +227,8 @@ public class MainResourceGetter {
         ArrayList<ObservationData> observation=patient.getObservationData();
         for(ObservationData o : observation){
             if(o.getInfo().equals("Body Height")){
-                pd.add(new PlotData(o.getValue(),o.getAdataTime()));
+                if(!o.getUnit().equals(""))
+                    pd.add(new PlotData(o.getValue(),o.getAdataTime()));
             }
         }
         return pd;
@@ -240,7 +239,8 @@ public class MainResourceGetter {
         ArrayList<ObservationData> observation=patient.getObservationData();
         for(ObservationData o : observation){
             if(o.getInfo().equals("Body Weight")){
-                pd.add(new PlotData(o.getValue(),o.getAdataTime()));
+                if(!o.getUnit().equals(""))
+                    pd.add(new PlotData(o.getValue(),o.getAdataTime()));
             }
         }
         return pd;
