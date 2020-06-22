@@ -57,7 +57,14 @@
     -fx-text-fill: #888;
 }
 
+.stackPanePlot{
+    -fx-background-color: red;
+}
 
+.stackPanePlot:hover{
+    -fx-cursor: hand;
+    -fx-background-color: firebrick;
+}
 
 
 

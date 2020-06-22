@@ -2,6 +2,7 @@
 
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <BorderPane fx:id="mainPane"
             styleClass="main_pane"
             stylesheets="/style/main.css"
@@ -9,9 +10,21 @@
             xmlns="http://javafx.com/javafx/10.0.2-internal">
 
     <top>
-        <Button onAction="#returnTo" styleClass="filtrCombo">Wróć</Button>
+        <BorderPane>
+            <left>
+                <Button onAction="#returnTo" styleClass="filtrCombo">Wróć</Button>
+            </left>
+            <center>
+                <VBox alignment="TOP_CENTER">
+                    <Label fx:id="detailTitle" style="-fx-font-size: 2em;"/>
+                    <Label fx:id="detailType" styleClass="patientData"/>
+                    <Label fx:id="detailDate" styleClass="patientData"/>
+                </VBox>
+            </center>
+        </BorderPane>
     </top>
     <center>
+
 
     </center>
 
