@@ -1,5 +1,6 @@
 package sample;
 
+import fhir.MainResourceGetter;
 import fhir.ObservationData;
 import fhir.PatientData;
 import javafx.fxml.FXML;
@@ -123,12 +124,12 @@ public class Patient {
 
     @FXML
     public void weightPlot(){
-        Main.changeScene("/fxml/plots.fxml", new Plots(this), mainPane);
+        Main.changeScene("/fxml/plots.fxml", new Plots(this, MainResourceGetter.getDataWeight(patientInfo)), mainPane);
     }
 
     @FXML
     public void heightPlot(){
-        Main.changeScene("/fxml/plots.fxml", new Plots(this), mainPane);
+        Main.changeScene("/fxml/plots.fxml", new Plots(this, MainResourceGetter.getDataHeight(patientInfo)), mainPane);
     }
 
     @FXML
