@@ -1,5 +1,6 @@
 package fhir;
 
+import javax.swing.*;
 import java.util.Date;
 
 public class ObservationData {
@@ -23,7 +24,7 @@ public class ObservationData {
         return info;
     }
 
-    public String getValue() {
+    public Double getValue() {
         return value;
     }
 
@@ -31,20 +32,27 @@ public class ObservationData {
         return adataTime;
     }
 
-    public String getEncounter() {
-        return encounter;
+    public String getUnit() {
+        return unit;
     }
 
-    String id;
-    String sourceId;
-    String status;
-    String category;
-    String info;
-    String value;
-    Date adataTime;     // Poprawiłem na Date bo łatwiej mi sie korzysta niż ze stringa
-    String encounter;
+    private String id;
+    private String sourceId;
+    private String status;
+    private String category;
+    private String info;
+    private Double value;
+    private Date adataTime;
+    private String unit;
 
-    ObservationData(String id){
+    ObservationData(String id, String sourceId, String status, String category, String info, Double value, Date adataTime, String unit){
         this.id=id;
+        this.sourceId=sourceId;
+        this.status=status;
+        this.category=category;
+        this.info=info;
+        this.value=value;
+        this.adataTime=adataTime;
+        this.unit=unit;
     }
 }

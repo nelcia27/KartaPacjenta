@@ -31,10 +31,6 @@ public class PatientData {
         return dateBirth;
     }
 
-    public String getAlive() {
-        return alive;
-    }
-
     public String getAddress() {
         return address;
     }
@@ -43,82 +39,34 @@ public class PatientData {
         return meritalStatus;
     }
 
-    public Boolean getBirthMultiple() {
-        return birthMultiple;
-    }
-
-    public String getContactRelationShip() {
-        return contactRelationShip;
-    }
-
-    public String getContactName() {
-        return contactName;
-    }
-
-    public String getContactTelephone() {
-        return contactTelephone;
-    }
-
-    public String getContactAddress() {
-        return contactAddress;
-    }
-
-    public String getContactSex() {
-        return contactSex;
-    }
-
-    public String getContactOrganization() {
-        return contactOrganization;
-    }
-
-    public String getContactWhen() {
-        return contactWhen;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public String getPreferredLanguage() {
-        return preferredLanguage;
-    }
-
-    public String getMedician() {
-        return medician;
-    }
-
-    public String getOrganizationMain() {
-        return organizationMain;
-    }
-
     public ArrayList<ObservationData> getObservationData() {
         return observationData;
     }
 
-    String id;  // FIXME: może lepiej jak będą prywatne i init w konstruktorze?
-    Boolean status;
-    String name;
-    String phone;
-    String sex;
-    Date dateBirth;
-    String alive;
-    String address;
-    String meritalStatus;
-    Boolean birthMultiple;
-    String contactRelationShip;
-    String contactName;
-    String contactTelephone;
-    String contactAddress;
-    String contactSex;
-    String contactOrganization;
-    String contactWhen;
-    String language;
-    String preferredLanguage;
-    String medician;
-    String organizationMain;
-    ArrayList<ObservationData> observationData;
+    public ArrayList<MedicationData> getMedicationData() {
+        return medicationData;
+    }
 
-    PatientData(String id){
+    private String id;
+    private Boolean status;
+    private String name;
+    private String phone;
+    private String sex;
+    private Date dateBirth;
+    private String address;
+    private String meritalStatus;
+
+    ArrayList<ObservationData> observationData;
+    ArrayList<MedicationData> medicationData;
+
+    PatientData(String id, Boolean status, String name, String phone, String sex, Date dateBirth, String address, String meritalStatus){
         this.id=id;
+        this.status=status;
+        this.name=name;
+        this.phone=phone;
+        this.sex=sex;
+        this.dateBirth=dateBirth;
+        this.address=address;
+        this.meritalStatus=meritalStatus;
     }
 }

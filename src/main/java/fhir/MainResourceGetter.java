@@ -28,28 +28,26 @@ public class MainResourceGetter {
 
         // Take all needed resources
         patients = getPatientsFromServer(ctx,client);
-        //ArrayList<String> observations=getObservations(ctx,client);
         ArrayList<ObservationData> observations=getObservations(ctx,client);
-        //ArrayList<String> medicationRequests=getMedicationRequests(ctx,client);
+        ArrayList<MedicationData> medicationRequests=getMedicationRequests(ctx,client);
 
         for(PatientData p : patients){
             ArrayList<ObservationData> observationData=new ArrayList<>();
             for(ObservationData o : observations){
-                if(o.sourceId.equals("Patient/"+p.id)){
+                if(o.getSourceId().equals("Patient/"+p.getId())){
                     observationData.add(o);
                 }
             }
             p.observationData=observationData;
-            System.out.println("Found "+p.observationData.size()+" observations for patient with id "+p.id);
-        }
 
-        for(ObservationData o : observations){
-            //System.out.println(o);
+            ArrayList<MedicationData> medicationData=new ArrayList<>();
+            for (MedicationData md : medicationRequests){
+                if(md.getSourceId().equals("Patient/"+p.getId())){
+                    medicationData.add(md);
+                }
+            }
+            p.medicationData=medicationData;
         }
-
-        /*for(String m : medicationRequests){
-            System.out.println(m);
-        }*/
     }
 
     public ArrayList<PatientData> getPatientsFromServer(FhirContext ctx, IGenericClient client){
@@ -71,8 +69,6 @@ public class MainResourceGetter {
             patientsX.addAll(BundleUtil.toListOfResources(ctx, patients));
         }
 
-        System.out.println("Found " +patientsX.size()+ " patients ");
-
         ArrayList<String> idListPatient=new ArrayList<>();
         for(IBaseResource r : patientsX){
             idListPatient.add(r.getIdElement().getValue());
@@ -91,36 +87,23 @@ public class MainResourceGetter {
 
         ArrayList<PatientData> res_patients= new ArrayList<>();
         for(Patient p : patients1){
-            //System.out.println(p.NAME.getParamName());
-            //System.out.println(p.getGender());
-            PatientData patient=new PatientData(p.getIdElement().getIdPart());
-            patient.status=p.getActive();
-            patient.name=p.getName().get(0).getNameAsSingleString();
-            patient.phone=p.getTelecom().get(0).getValue();
-            patient.sex=p.getGender().toString();
-            patient.dateBirth=p.getBirthDate();
-            //patient.alive=p.getDeceased().toString();
-            patient.address=p.getAddress().get(0).getCity()+" "+p.getAddress().get(0).getCountry()+" "+p.getAddress().get(0).getDistrict()+" "+p.getAddress().get(0).getPostalCode();
-            patient.meritalStatus=p.getMaritalStatus().getText();
-//            patient.birthMultiple=p.getMultipleBirthBooleanType().booleanValue();
-            //patient.contactRelationShip=p.getContact().get(0).getRelationship().toString(); //BRAK DANYCH NA SERWERZE
-            patient.language=p.getLanguage(); //BRAK DANYCH NA SERWERZE
-            patient.medician=p.getGeneralPractitioner().toString(); //BRAK DANYCH NA SERWERZE
-            patient.organizationMain=p.getManagingOrganization().getDisplayElement().getValueNotNull(); //BRAK DANYCH NA SERWERZE
-            /*System.out.println(patient.id);
-            System.out.println(patient.status);
-            System.out.println(patient.name);
-            System.out.println(patient.phone);
-            System.out.println(patient.sex);
-            System.out.println(patient.dateBirth);
-            System.out.println(patient.alive);
-            System.out.println(patient.address);
-            System.out.println(patient.meritalStatus);
-            System.out.println(patient.birthMultiple);
-            System.out.println(patient.contactRelationShip);
-            System.out.println(patient.language);
-            System.out.println(patient.medician);
-            System.out.println(patient.organizationMain);*/
+            String dist="";
+            String postal_code="";
+            if(p.getAddress().get(0).getDistrict()!=null){
+                dist=p.getAddress().get(0).getDistrict();
+            }
+            if(p.getAddress().get(0).getPostalCode()!=null){
+                postal_code=p.getAddress().get(0).getPostalCode();
+            }
+            PatientData patient=new PatientData(p.getIdElement().getIdPart(),
+                    p.getActive(),
+                    p.getName().get(0).getNameAsSingleString(),
+                    p.getTelecom().get(0).getValue(),
+                    p.getGender().toString(),
+                    p.getBirthDate(),
+                    p.getAddress().get(0).getCity()+" "+p.getAddress().get(0).getCountry()+" "+dist+" "+postal_code,
+                    p.getMaritalStatus().getText()
+                    );
             res_patients.add(patient);
         }
 
@@ -145,14 +128,6 @@ public class MainResourceGetter {
             observationsX.addAll(BundleUtil.toListOfResources(ctx, observations));
         }
 
-        System.out.println("Found " +observationsX.size()+ " observations ");
-
-        /*ArrayList<Resource> resourcesObservations=new ArrayList<>();
-        for (Iterator<Bundle.BundleEntryComponent> it = observations.getEntry().iterator(); it.hasNext(); ) {
-            Bundle.BundleEntryComponent p = it.next();
-            resourcesObservations.add(p.getResource());
-        }*/
-
         ArrayList<String> idListObservations=new ArrayList<>();
         for(IBaseResource r : observationsX){
             idListObservations.add(r.getIdElement().getValue());
@@ -170,34 +145,34 @@ public class MainResourceGetter {
         }
 
         ArrayList<ObservationData> res_observation= new ArrayList<>();
-        //int i=0;
         for(Observation p : observations1){
-            //i++;
-            ObservationData o= new ObservationData(p.getId());
-            o.sourceId=p.getSubject().getReference();
-            o.status=p.getStatus().toCode();
-            o.category=p.getCategory().get(0).getCoding().get(0).getCode();
-            o.info=p.getCode().getText();
-            o.adataTime=p.getEffectiveDateTimeType().getValue();
-            //o.value=p.getValue().primitiveValue();
-            o.encounter=p.getEncounter().getReference();
+            Double value=120.0;
+            String unit="cm";
+            try{
+                value=p.getValueQuantity().getValue().doubleValue();
+                System.out.println(value);
+                unit = p.getValueQuantity().getUnit();
+                System.out.println(unit);
+            }catch (Exception e){
+
+            }
+            ObservationData o= new ObservationData(p.getId(),
+                    p.getSubject().getReference(),
+                    p.getStatus().toCode(),
+                    p.getCategory().get(0).getCoding().get(0).getCode(),
+                    p.getCode().getText(),
+                    value,
+                    p.getEffectiveDateTimeType().getValue(),
+                    unit
+                    );
+
             res_observation.add(o);
-            /*if(i<2){
-                System.out.println(o.sourceId);
-                System.out.println(o.status);
-                System.out.println(o.category);
-                System.out.println(o.info);
-                System.out.println(o.adataTime);
-                //System.out.println(o.value);
-                System.out.println(o.encounter);
-            }*/
-            //System.out.println(p.getBodySite());
 
         }
         return res_observation;
     }
 
-    public ArrayList<String> getMedicationRequests(FhirContext ctx, IGenericClient client){
+    public ArrayList<MedicationData> getMedicationRequests(FhirContext ctx, IGenericClient client){
         List<IBaseResource> medicationsX = new ArrayList<>();
         Bundle medicationRequests = client
                 .search()
@@ -215,7 +190,7 @@ public class MainResourceGetter {
             medicationsX.addAll(BundleUtil.toListOfResources(ctx, medicationRequests));
         }
 
-        System.out.println("Found " +medicationsX.size()+ " medicationReqests");
+        //System.out.println("Found " +medicationsX.size()+ " medicationReqests");
 
         ArrayList<String> idListMedicationRequests=new ArrayList<>();
         for(IBaseResource r : medicationsX){
@@ -233,15 +208,41 @@ public class MainResourceGetter {
             medicationRequests1.add(p);
         }
 
-        ArrayList<String> res_medicationRequest= new ArrayList<>();
+        ArrayList<MedicationData> res_medicationRequest= new ArrayList<>();
         for(MedicationRequest p : medicationRequests1){
-            //System.out.println(p.getSubject().getReference());
-            //--TYLKO NA CHWILE
-            //res_medicationRequest.add(p.getSubject().getDisplay());
-            //System.out.println(p.getBodySite());
+            MedicationData md=new MedicationData(p.getId(),
+                    p.getSubject().getReference(),
+                    p.getStatus().toCode(),
+                    p.getMedicationCodeableConcept().getCoding().get(0).getDisplay(),
+                    p.getAuthoredOn(),
+                    p.getRequester().getDisplay()
+                    );
+            res_medicationRequest.add(md);
+
         }
 
         return res_medicationRequest;
     }
 
+    public ArrayList<PlotData> getDataHeight(PatientData patient){
+        ArrayList<PlotData> pd= new ArrayList<>();
+        ArrayList<ObservationData> observation=patient.getObservationData();
+        for(ObservationData o : observation){
+            if(o.getInfo().equals("Body Height")){
+                pd.add(new PlotData(o.getValue(),o.getAdataTime()));
+            }
+        }
+        return pd;
+    }
+
+    public ArrayList<PlotData> getDataWeight(PatientData patient){
+        ArrayList<PlotData> pd= new ArrayList<>();
+        ArrayList<ObservationData> observation=patient.getObservationData();
+        for(ObservationData o : observation){
+            if(o.getInfo().equals("Body Weight")){
+                pd.add(new PlotData(o.getValue(),o.getAdataTime()));
+            }
+        }
+        return pd;
+    }
 }
