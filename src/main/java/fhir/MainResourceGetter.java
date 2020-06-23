@@ -222,7 +222,7 @@ public class MainResourceGetter {
         return res_medicationRequest;
     }
 
-    public ArrayList<PlotData> getDataHeight(PatientData patient){
+    public static ArrayList<PlotData> getDataHeight(PatientData patient){
         ArrayList<PlotData> pd= new ArrayList<>();
         ArrayList<ObservationData> observation=patient.getObservationData();
         for(ObservationData o : observation){
@@ -234,7 +234,7 @@ public class MainResourceGetter {
         return pd;
     }
 
-    public ArrayList<PlotData> getDataWeight(PatientData patient){
+    public static ArrayList<PlotData> getDataWeight(PatientData patient){
         ArrayList<PlotData> pd= new ArrayList<>();
         ArrayList<ObservationData> observation=patient.getObservationData();
         for(ObservationData o : observation){
