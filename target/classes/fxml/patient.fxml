@@ -29,6 +29,11 @@
                         <Label styleClass="patientData">Nr tel: </Label>
                         <Label fx:id="patientPhoneNumber" styleClass="patientData"/>
                     </HBox>
+                    <HBox spacing="10" alignment="TOP_CENTER">
+                        <Label styleClass="patientData">Status: </Label>
+                        <Label fx:id="patientStatus" styleClass="patientData"/>
+                    </HBox>
+
 
                 </VBox>
             </center>
@@ -43,6 +48,7 @@
             <HBox spacing="20" alignment="TOP_CENTER">
                 <Button styleClass="filtrCombo" onAction="#weightPlot">Waga</Button>
                 <Button styleClass="filtrCombo" onAction="#heightPlot">Wzrost</Button>
+                <Button styleClass="filtrCombo" onAction="#editPatient">Edytuj</Button>
             </HBox>
             <ScrollPane style="-fx-border-width: 0; -fx-background-color: none;" hbarPolicy="NEVER">
                 <VBox fx:id="patientHistory" spacing="10"/>

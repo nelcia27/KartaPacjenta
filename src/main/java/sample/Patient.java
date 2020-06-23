@@ -29,6 +29,7 @@ public class Patient {
     @FXML public Label patientBirthDate;
     @FXML public Label patientAddress;
     @FXML public Label patientPhoneNumber;
+    @FXML public Label patientStatus;
     @FXML public VBox patientHistory;
     @FXML public ComboBox<Date> filtrComboBox;
 
@@ -46,6 +47,10 @@ public class Patient {
         patientBirthDate.setText(mainFormat.format(patientInfo.getDateBirth()));
         patientAddress.setText(patientInfo.getAddress());
         patientPhoneNumber.setText(patientInfo.getPhone());
+        if(patientInfo.getStatus())
+            patientStatus.setText("Tak");
+        else
+            patientStatus.setText("Nie");
 
         showPatientHistory(null);
         setComboOption();
@@ -125,6 +130,11 @@ public class Patient {
                 filtrComboBox.getItems().add(currentDate);
             }
         }
+    }
+
+    @FXML
+    public void editPatient(){
+        Main.changeScene("/fxml/editPatient.fxml", new EditPatient(this, patientInfo), mainPane);
     }
 
     @FXML

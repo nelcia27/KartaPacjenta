@@ -2,7 +2,6 @@ package fhir;
 
 import org.hl7.fhir.r4.model.Observation;
 
-import javax.swing.*;
 import java.util.Date;
 
 public class ObservationData extends PatientDetailData {

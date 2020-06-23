@@ -1,7 +1,6 @@
 package fhir;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.model.base.composite.BaseCodingDt;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.util.BundleUtil;
@@ -10,7 +9,6 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.*;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class MainResourceGetter {
@@ -18,16 +16,21 @@ public class MainResourceGetter {
     public ArrayList<PatientData> getPatients() {
         return patients;
     }
-
     private ArrayList<PatientData> patients;
+    private static IGenericClient client;
+    private static FhirContext ctx;
+
+    public static IGenericClient getClient() {
+        return client;
+    }
 
     public void run() {
 
         // Create a context
-        FhirContext ctx = FhirContext.forR4();
+        ctx = FhirContext.forR4();
 
         // Create a client
-        IGenericClient client = ctx.newRestfulGenericClient("http://localhost:8080/baseR4");
+        client = ctx.newRestfulGenericClient("http://localhost:8080/baseR4");
 
         // Take all needed resources
         patients = getPatientsFromServer(ctx,client);
@@ -66,7 +69,7 @@ public class MainResourceGetter {
         }
     }
 
-    public ArrayList<PatientData> getPatientsFromServer(FhirContext ctx, IGenericClient client){
+    public static ArrayList<PatientData> getPatientsFromServer(FhirContext ctx, IGenericClient client){
         List<IBaseResource> patientsX = new ArrayList<>();
 
         Bundle patients = client
@@ -117,7 +120,10 @@ public class MainResourceGetter {
                     p.getTelecom().get(0).getValue(),
                     p.getGender().toString(),
                     p.getBirthDate(),
-                    p.getAddress().get(0).getCity()+" "+p.getAddress().get(0).getCountry()+" "+dist+" "+postal_code,
+                    p.getAddress().get(0).getCountry(),
+                    p.getAddress().get(0).getCity(),
+                    dist,
+                    postal_code,
                     p.getMaritalStatus().getText()
                     );
             patient.patient=p;
@@ -261,35 +267,38 @@ public class MainResourceGetter {
         return pd;
     }
 
-    public void updatePatientStatus(Patient patient, IGenericClient client, boolean status){
-        patient.setActive(status);
+    public static Patient updatePatientStatus(PatientData patient, boolean status){
+        patient.getPatient().setActive(status);
         MethodOutcome outcome = client.update()
-                .resource(patient)
+                .resource(patient.getPatient())
                 .execute();
+        return getUpdatedPatient(patient);
     }
 
-    public void updatePatientTelecom(Patient patient, IGenericClient client, String number){
-        List<ContactPoint> tmp=patient.getTelecom();
+    public static Patient updatePatientTelecom(PatientData patient, String number){
+        List<ContactPoint> tmp=patient.getPatient().getTelecom();
         tmp.get(0).setValue(number);
-        patient.setTelecom(tmp);
+        patient.getPatient().setTelecom(tmp);
         MethodOutcome outcome = client.update()
-                .resource(patient)
+                .resource(patient.getPatient())
                 .execute();
+        return getUpdatedPatient(patient);
     }
 
-    public void updatePatientAddress(Patient patient, IGenericClient client, String country, String city, String dist, String post_code){
-        List<Address> tmp=patient.getAddress();
+    public static Patient updatePatientAddress(PatientData patient, String country, String city, String dist, String post_code){
+        List<Address> tmp=patient.getPatient().getAddress();
         tmp.get(0).setCity(city);
         tmp.get(0).setCountry(country);
         tmp.get(0).setDistrict(dist);
         tmp.get(0).setPostalCode(post_code);
-        patient.setAddress(tmp);
+        patient.getPatient().setAddress(tmp);
         MethodOutcome outcome = client.update()
-                .resource(patient)
+                .resource(patient.getPatient())
                 .execute();
+        return getUpdatedPatient(patient);
     }
 
-    public void updateObservationUnit(Observation o, IGenericClient client, String unit){
+    public static void updateObservationUnit(Observation o, String unit){
         try{
             Type tmp= o.getValueQuantity().setUnit(unit);
             o.setValue(tmp);
@@ -301,7 +310,7 @@ public class MainResourceGetter {
         }
     }
 
-    public void updateObservationValue(Observation o, IGenericClient client, Double value){
+    public static void updateObservationValue(Observation o, Double value){
         try{
             Type tmp= o.getValueQuantity().setValue(value);
             o.setValue(tmp);
@@ -311,6 +320,14 @@ public class MainResourceGetter {
         }catch (Exception e){
 
         }
+    }
+
+    public static Patient getUpdatedPatient(PatientData patient){
+        for(PatientData patientData : getPatientsFromServer(ctx, client)){
+            if(patient.getId().equals(patientData.getId()))
+                return patientData.getPatient();
+        }
+        return patient.getPatient();
     }
 
 }
