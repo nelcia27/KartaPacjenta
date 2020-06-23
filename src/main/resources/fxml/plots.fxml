@@ -30,10 +30,10 @@
         <VBox>
             <VBox fx:id="lineChartVBox"/>
             <HBox spacing="10" alignment="TOP_CENTER">
-                <Button onAction="#prevClick" styleClass="filtrCombo" prefWidth="150" fx:id="prevButton">poprzedni</Button>
-                <Button onAction="#plusClick" styleClass="filtrCombo" prefWidth="50" fx:id="plusButton">+</Button>
-                <Button onAction="#minusClick" styleClass="filtrCombo" prefWidth="50" fx:id="minusButton">-</Button>
-                <Button onAction="#nextClick" styleClass="filtrCombo" prefWidth="150" fx:id="nextButton">następny</Button>
+                <Button onAction="#prevClick" styleClass="filtrCombo" prefWidth="150">poprzedni</Button>
+                <Button onAction="#plusClick" styleClass="filtrCombo" prefWidth="50">+</Button>
+                <Button onAction="#minusClick" styleClass="filtrCombo" prefWidth="50">-</Button>
+                <Button onAction="#nextClick" styleClass="filtrCombo" prefWidth="150">następny</Button>
             </HBox>
         </VBox>
 
