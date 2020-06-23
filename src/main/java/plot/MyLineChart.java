@@ -33,7 +33,8 @@ public class MyLineChart extends LineChart<Number, Number> {
             XYChart.Data<Number, Number> d = new XYChart.Data<Number, Number>(upperBound++, data.getValue());
             Button but = new Button();
             but.getStyleClass().add("stackPanePlot");
-            but.setTooltip(new Tooltip(data.getValue().toString()));
+            String res = String.format("%.2f", data.getValue());
+            but.setTooltip(new Tooltip(res));
             d.setNode(but);
             series.getData().add(d);
         }

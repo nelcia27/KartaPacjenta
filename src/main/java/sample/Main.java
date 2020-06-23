@@ -44,8 +44,8 @@ public class Main extends Application {
             Scene scene = new Scene(root, width, height);
             stage.setScene(scene);
             stage.show();
-        } catch (IOException ignored) {
-            ignored.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }

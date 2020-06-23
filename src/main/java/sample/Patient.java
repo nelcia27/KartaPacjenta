@@ -1,8 +1,8 @@
 package sample;
 
 import fhir.MainResourceGetter;
-import fhir.ObservationData;
 import fhir.PatientData;
+import fhir.PatientDetailData;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -12,6 +12,7 @@ import javafx.util.Callback;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 public class Patient {
@@ -20,6 +21,7 @@ public class Patient {
     private final SimpleDateFormat mainFormat = new SimpleDateFormat("dd-MM-yyyy");
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
     private final SimpleDateFormat months = new SimpleDateFormat("MM-yyyy");
+    private final ArrayList<PatientDetailData> patientDetailData = new ArrayList<>();
 
     @FXML public BorderPane mainPane;
     @FXML public Label patientName;
@@ -33,6 +35,9 @@ public class Patient {
     public Patient(Object prevController, PatientData patientInfo) {
         this.prevController = prevController;
         this.patientInfo = patientInfo;
+        patientDetailData.addAll(patientInfo.getObservationData());
+        patientDetailData.addAll(patientInfo.getMedicationData());
+        Collections.sort(patientDetailData);
     }
 
     @FXML public void initialize(){
@@ -48,10 +53,10 @@ public class Patient {
 
     private void showPatientHistory(Date monthYear) {
         patientHistory.getChildren().clear();
-        Date currentDate = patientInfo.getObservationData().get(0).getAdataTime();
+        Date currentDate = patientDetailData.get(0).getAdataTime();
         if(monthYear == null || months.format(currentDate).equals(months.format(monthYear)))
             createLabel(mainFormat.format(currentDate));
-        for(ObservationData observationData : patientInfo.getObservationData()){
+        for(PatientDetailData observationData : patientDetailData){
             if(!mainFormat.format(currentDate).equals(mainFormat.format(observationData.getAdataTime()))){
                 currentDate = observationData.getAdataTime();
                 if(monthYear == null || months.format(currentDate).equals(months.format(monthYear)))
@@ -62,19 +67,19 @@ public class Patient {
         }
     }
 
-    private void createButton(ObservationData observationData){    // TODO: maybe polimorfism?
+    private void createButton(PatientDetailData patientHistoryData){
         Button current = new Button();
         HBox buttonLayout = new HBox();
-        Label time = new Label(timeFormat.format(observationData.getAdataTime()));
+        Label time = new Label(timeFormat.format(patientHistoryData.getAdataTime()));
         VBox buttonName = new VBox();
-        Label properName = new Label(observationData.getInfo());
-        Label generalName = new Label("Obserwacja");   // TODO: name (general)
+        Label properName = new Label(patientHistoryData.getInfo());
+        Label generalName = new Label(patientHistoryData.getDescription());
         generalName.getStyleClass().add("generalName");
         buttonName.getChildren().addAll(properName, generalName);
         buttonLayout.getChildren().addAll(time, buttonName);
         current.setGraphic(buttonLayout);
         current.getStyleClass().add("historyButton");
-        current.setOnAction(event -> gotoDetails(observationData));    // TODO: set which details
+        current.setOnAction(event -> gotoDetails(patientHistoryData));
         patientHistory.getChildren().add(current);
     }
 
@@ -84,11 +89,11 @@ public class Patient {
         patientHistory.getChildren().add(dateLabel);
     }
 
-    private void gotoDetails(ObservationData observationData){
+    private void gotoDetails(PatientDetailData observationData){
         Main.changeScene("/fxml/details.fxml", new Details(this, observationData), mainPane);
     }
 
-    private void setComboOption(){  // TODO: Real time
+    private void setComboOption(){
         Callback<ListView<Date>, ListCell<Date>> cellFactory = new Callback<ListView<Date>, ListCell<Date>>() {
 
             @Override
@@ -112,11 +117,11 @@ public class Patient {
         filtrComboBox.setButtonCell(cellFactory.call(null));
         filtrComboBox.setCellFactory(cellFactory);
         filtrComboBox.getItems().add(null);
-        Date currentDate = patientInfo.getObservationData().get(0).getAdataTime();
+        Date currentDate = patientDetailData.get(0).getAdataTime();
         filtrComboBox.getItems().add(currentDate);
-        for(ObservationData observationData : patientInfo.getObservationData()){
-            if(!months.format(currentDate).equals(months.format(observationData.getAdataTime()))){
-                currentDate = observationData.getAdataTime();
+        for(PatientDetailData patientDetail : patientDetailData){
+            if(!months.format(currentDate).equals(months.format(patientDetail.getAdataTime()))){
+                currentDate = patientDetail.getAdataTime();
                 filtrComboBox.getItems().add(currentDate);
             }
         }
