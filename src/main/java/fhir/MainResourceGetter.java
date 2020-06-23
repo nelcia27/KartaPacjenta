@@ -133,7 +133,7 @@ public class MainResourceGetter {
         return res_patients;
     }
 
-    public ArrayList<ObservationData> getObservations(FhirContext ctx, IGenericClient client){
+    public static ArrayList<ObservationData> getObservations(FhirContext ctx, IGenericClient client){
         List<IBaseResource> observationsX = new ArrayList<>();
         Bundle observations = client
                 .search()
@@ -298,28 +298,24 @@ public class MainResourceGetter {
         return getUpdatedPatient(patient);
     }
 
-    public static void updateObservationUnit(Observation o, String unit){
+    public static void updateObservationUnit(ObservationData o, String unit){
         try{
-            Type tmp= o.getValueQuantity().setUnit(unit);
-            o.setValue(tmp);
+            Type tmp= o.getObservation().getValueQuantity().setUnit(unit);
+            o.getObservation().setValue(tmp);
             MethodOutcome outcome = client.update()
-                    .resource(o)
+                    .resource(o.getObservation())
                     .execute();
-        }catch (Exception e){
-
-        }
+        }catch (Exception ignored){ }
     }
 
-    public static void updateObservationValue(Observation o, Double value){
+    public static void updateObservationValue(ObservationData o, Double value){
         try{
-            Type tmp= o.getValueQuantity().setValue(value);
-            o.setValue(tmp);
+            Type tmp= o.getObservation().getValueQuantity().setValue(value);
+            o.getObservation().setValue(tmp);
             MethodOutcome outcome = client.update()
-                    .resource(o)
+                    .resource(o.getObservation())
                     .execute();
-        }catch (Exception e){
-
-        }
+        }catch (Exception ignored){ }
     }
 
     public static Patient getUpdatedPatient(PatientData patient){

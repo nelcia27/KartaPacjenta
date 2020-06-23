@@ -10,7 +10,7 @@
             xmlns="http://javafx.com/javafx/10.0.2-internal">
 
     <top>
-        <BorderPane>
+        <BorderPane fx:id="topBorderPane">
             <left>
                 <Button onAction="#returnTo" styleClass="filtrCombo">Wróć</Button>
             </left>
@@ -21,9 +21,6 @@
                     <Label fx:id="detailDate" styleClass="patientData"/>
                 </VBox>
             </center>
-            <right>
-                <Button styleClass="filtrCombo" onAction="#editDetails">Edytuj</Button>
-            </right>
         </BorderPane>
     </top>
     <center>

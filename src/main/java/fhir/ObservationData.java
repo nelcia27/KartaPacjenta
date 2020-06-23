@@ -23,6 +23,13 @@ public class ObservationData extends PatientDetailData {
         return observation;
     }
 
+    public void update(Double valueUpdate, String unitUpdate){
+        MainResourceGetter.updateObservationValue(this, valueUpdate);
+        value = valueUpdate;
+        MainResourceGetter.updateObservationUnit(this, unitUpdate);
+        unit = unitUpdate;
+    }
+
     private String category;
     private Double value;
     private String unit;

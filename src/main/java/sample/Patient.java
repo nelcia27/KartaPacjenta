@@ -95,7 +95,7 @@ public class Patient {
     }
 
     private void gotoDetails(PatientDetailData observationData){
-        Main.changeScene("/fxml/details.fxml", new Details(this, observationData), mainPane);
+        Main.changeScene("/fxml/details.fxml", new Details(this, observationData, patientInfo), mainPane);
     }
 
     private void setComboOption(){
