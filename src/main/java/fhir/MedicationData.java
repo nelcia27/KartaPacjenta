@@ -1,5 +1,7 @@
 package fhir;
 
+import org.hl7.fhir.r4.model.MedicationRequest;
+
 import java.util.Date;
 
 public class MedicationData extends PatientDetailData {

@@ -1,5 +1,7 @@
 package fhir;
 
+import org.hl7.fhir.r4.model.Observation;
+
 import javax.swing.*;
 import java.util.Date;
 
@@ -18,9 +20,14 @@ public class ObservationData extends PatientDetailData {
         return unit;
     }
 
+    public Observation getObservation() {
+        return observation;
+    }
+
     private String category;
     private Double value;
     private String unit;
+    Observation observation;
 
     ObservationData(String id, String sourceId, String status, String category, String info, Double value, Date adataTime, String unit){
         super(id, sourceId, status, info, adataTime, "Obserwacja");
