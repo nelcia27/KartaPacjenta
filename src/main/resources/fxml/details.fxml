@@ -15,12 +15,15 @@
                 <Button onAction="#returnTo" styleClass="filtrCombo">Wróć</Button>
             </left>
             <center>
-                <VBox alignment="TOP_CENTER">
+                <VBox alignment="TOP_CENTER" fx:id="mainVBox">
                     <Label fx:id="detailTitle" style="-fx-font-size: 2em;"/>
                     <Label fx:id="detailType" styleClass="patientData"/>
                     <Label fx:id="detailDate" styleClass="patientData"/>
                 </VBox>
             </center>
+            <right>
+                <Button styleClass="filtrCombo" onAction="#editDetails">Edytuj</Button>
+            </right>
         </BorderPane>
     </top>
     <center>
