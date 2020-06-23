@@ -1,6 +1,7 @@
 package fhir;
 
 import org.hl7.fhir.r4.model.HumanName;
+import org.hl7.fhir.r4.model.Patient;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,6 +48,10 @@ public class PatientData {
         return medicationData;
     }
 
+    public Patient getPatient(){
+        return patient;
+    }
+
     private String id;
     private Boolean status;
     private String name;
@@ -58,6 +63,8 @@ public class PatientData {
 
     ArrayList<ObservationData> observationData;
     ArrayList<MedicationData> medicationData;
+    Patient patient;
+
 
     PatientData(String id, Boolean status, String name, String phone, String sex, Date dateBirth, String address, String meritalStatus){
         this.id=id;
