@@ -1,5 +1,7 @@
 package fhir;
 
+import org.hl7.fhir.r4.model.Observation;
+
 import javax.swing.*;
 import java.util.Date;
 
@@ -36,6 +38,10 @@ public class ObservationData {
         return unit;
     }
 
+    public Observation getObservation() {
+        return observation;
+    }
+
     private String id;
     private String sourceId;
     private String status;
@@ -44,6 +50,7 @@ public class ObservationData {
     private Double value;
     private Date adataTime;
     private String unit;
+    Observation observation;
 
     ObservationData(String id, String sourceId, String status, String category, String info, Double value, Date adataTime, String unit){
         this.id=id;

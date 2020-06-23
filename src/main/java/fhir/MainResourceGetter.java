@@ -1,6 +1,8 @@
 package fhir;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.base.composite.BaseCodingDt;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.util.BundleUtil;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
@@ -8,6 +10,7 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainResourceGetter {
@@ -47,6 +50,19 @@ public class MainResourceGetter {
                 }
             }
             p.medicationData=medicationData;
+
+            /*
+            updatePatientStatus(p.patient,client,false);
+            updatePatientTelecom(p.patient,client,"123456789");
+            updatePatientAddress(p.patient,client,"A","B","C","D");
+            try {
+                System.out.println(p.observationData.get(0).observation.getValueQuantity().getUnit());
+                updateObservationValue(p.observationData.get(0).observation, client, 12.0);
+                updateObservationUnit(p.observationData.get(0).observation, client, "cm");
+                System.out.println(p.observationData.get(0).observation.getValueQuantity().getUnit());
+            }catch(Exception e){
+
+            }*/
         }
     }
 
@@ -104,6 +120,7 @@ public class MainResourceGetter {
                     p.getAddress().get(0).getCity()+" "+p.getAddress().get(0).getCountry()+" "+dist+" "+postal_code,
                     p.getMaritalStatus().getText()
                     );
+            patient.patient=p;
             res_patients.add(patient);
         }
 
@@ -163,7 +180,7 @@ public class MainResourceGetter {
                     p.getEffectiveDateTimeType().getValue(),
                     unit
                     );
-
+            o.observation=p;
             res_observation.add(o);
 
         }
@@ -187,8 +204,6 @@ public class MainResourceGetter {
                     .execute();
             medicationsX.addAll(BundleUtil.toListOfResources(ctx, medicationRequests));
         }
-
-        //System.out.println("Found " +medicationsX.size()+ " medicationReqests");
 
         ArrayList<String> idListMedicationRequests=new ArrayList<>();
         for(IBaseResource r : medicationsX){
@@ -245,4 +260,57 @@ public class MainResourceGetter {
         }
         return pd;
     }
+
+    public void updatePatientStatus(Patient patient, IGenericClient client, boolean status){
+        patient.setActive(status);
+        MethodOutcome outcome = client.update()
+                .resource(patient)
+                .execute();
+    }
+
+    public void updatePatientTelecom(Patient patient, IGenericClient client, String number){
+        List<ContactPoint> tmp=patient.getTelecom();
+        tmp.get(0).setValue(number);
+        patient.setTelecom(tmp);
+        MethodOutcome outcome = client.update()
+                .resource(patient)
+                .execute();
+    }
+
+    public void updatePatientAddress(Patient patient, IGenericClient client, String country, String city, String dist, String post_code){
+        List<Address> tmp=patient.getAddress();
+        tmp.get(0).setCity(city);
+        tmp.get(0).setCountry(country);
+        tmp.get(0).setDistrict(dist);
+        tmp.get(0).setPostalCode(post_code);
+        patient.setAddress(tmp);
+        MethodOutcome outcome = client.update()
+                .resource(patient)
+                .execute();
+    }
+
+    public void updateObservationUnit(Observation o, IGenericClient client, String unit){
+        try{
+            Type tmp= o.getValueQuantity().setUnit(unit);
+            o.setValue(tmp);
+            MethodOutcome outcome = client.update()
+                    .resource(o)
+                    .execute();
+        }catch (Exception e){
+
+        }
+    }
+
+    public void updateObservationValue(Observation o, IGenericClient client, Double value){
+        try{
+            Type tmp= o.getValueQuantity().setValue(value);
+            o.setValue(tmp);
+            MethodOutcome outcome = client.update()
+                    .resource(o)
+                    .execute();
+        }catch (Exception e){
+
+        }
+    }
+
 }
